@@ -80,7 +80,7 @@ public class UIManager : MonoBehaviour
 
             _currentBoard.Add(c);
 
-            await Task.Delay(100);
+            await Task.Delay(50);
         }
     }
 }
