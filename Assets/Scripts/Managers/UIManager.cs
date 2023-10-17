@@ -12,6 +12,7 @@ public class UIManager : MonoBehaviour
 {
     public static UIManager Instance;
     public TMP_InputField AmountInput;
+    public TMP_InputField GameCountInput;
     public Card CardPrefab;
     private List<Card> _currentBoard = new();
     public TMP_Text TotalWin;
@@ -35,21 +36,37 @@ public class UIManager : MonoBehaviour
         {
             await _sem.WaitAsync();
 
-            if (float.TryParse(AmountInput.text, out var amount))
+            if (int.TryParse(GameCountInput.text, out var count))
             {
-                if (_tkc.IsCancellationRequested) return;
+                int index = count;
 
-                var result = await GameServerConnection.Instance.Play(amount);
+                for (int i = 0; i < count; i++)
+                {
+                    if (float.TryParse(AmountInput.text, out var amount))
+                    {
+                        if (_tkc.IsCancellationRequested) return;
 
-                RemoveOldBoardIfExists();
+                        var result = await GameServerConnection.Instance.Play(amount);
 
-                await PrintBoard(result.Board.ToList());
+                        RemoveOldBoardIfExists();
 
-                TotalWin.text = $"Your Win : {result.TotalWin}";
-            }
-            else
-            {
-                Debug.LogWarning("Wrong Bet Amount");
+                        await PrintBoard(result.Board.ToList());
+
+                        TotalWin.text = $"Your Win : {result.TotalWin}";
+
+                        index--;
+
+                        GameCountInput.text = index.ToString();
+
+                        await Task.Delay(ResultDelayInMs * 10);
+                    }
+                    else
+                    {
+                        Debug.LogWarning("Wrong Bet Amount");
+                    }
+
+
+                }
             }
         }
         catch (Exception ex)
