@@ -34,11 +34,11 @@ public class UIManager : MonoBehaviour
         try
         {
             await _sem.WaitAsync();
-            
-            if (_tkc.IsCancellationRequested) return;
 
             if (float.TryParse(AmountInput.text, out var amount))
             {
+                if (_tkc.IsCancellationRequested) return;
+
                 var result = await GameServerConnection.Instance.Play(amount);
 
                 RemoveOldBoardIfExists();
