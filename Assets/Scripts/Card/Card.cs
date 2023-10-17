@@ -24,6 +24,6 @@ public class Card : MonoBehaviour
     }
     public void SetWinMaterial()
     {
-        rend.materials[0] = WinMaterial;
+        rend.material = WinMaterial;
     }
 }
