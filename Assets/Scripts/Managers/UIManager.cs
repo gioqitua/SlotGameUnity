@@ -107,6 +107,8 @@ public class UIManager : MonoBehaviour
         {
             var pos = new Vector3(card.Position.X, card.Position.Y, 0);
 
+            if (_tkc.IsCancellationRequested) return;
+
             Card c = Instantiate(CardPrefab, pos, Quaternion.identity);
 
             c.SetParent(gameObject);
