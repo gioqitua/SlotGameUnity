@@ -73,6 +73,11 @@ public class UIManager : MonoBehaviour
 
             c.SetText(card.Rank.ToString());
 
+            if (card.IsInWinningSetup)
+            {
+                c.SetWinMaterial();
+            }
+
             _currentBoard.Add(c);
 
             await Task.Delay(100);

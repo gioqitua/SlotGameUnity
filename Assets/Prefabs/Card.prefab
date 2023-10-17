@@ -120,6 +120,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Text: {fileID: 7400918879661142736}
+  WinMaterial: {fileID: 2100000, guid: 45a0f014da3826143af5216ea3f1dfbf, type: 2}
+  DefaultMaterial: {fileID: 2100000, guid: 24edcf57e9f8a3840bd83427e141d174, type: 2}
 --- !u!1 &5776600343695131775
 GameObject:
   m_ObjectHideFlags: 0

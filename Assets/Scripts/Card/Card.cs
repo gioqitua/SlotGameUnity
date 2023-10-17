@@ -1,13 +1,18 @@
+using System.Linq;
 using TMPro;
+using UnityEditor.PackageManager.UI;
 using UnityEngine;
 
 public class Card : MonoBehaviour
 {
     public TMP_Text Text;
-    Renderer rend;
+    MeshRenderer rend;
+    public Material WinMaterial;
+    public Material DefaultMaterial;
     private void Awake()
     {
-        rend = GetComponent<Renderer>();
+        rend = GetComponent<MeshRenderer>();
+        rend.material = DefaultMaterial;
     }
     public void SetText(string text)
     {
@@ -17,8 +22,8 @@ public class Card : MonoBehaviour
     {
         this.transform.parent = go.transform;
     }
-    public void SetColor(Color color)
+    public void SetWinMaterial()
     {
-        rend.material.color = color;
+        rend.materials[0] = WinMaterial;
     }
 }
