@@ -38,6 +38,8 @@ public class UIManager : MonoBehaviour
 
             if (int.TryParse(GameCountInput.text, out var count))
             {
+                count = count == 0 ? 1 : count;
+
                 int index = count;
 
                 for (int i = 0; i < count; i++)
@@ -46,13 +48,15 @@ public class UIManager : MonoBehaviour
                     {
                         if (_tkc.IsCancellationRequested) return;
 
+                        TotalWin.text = string.Empty;
+
                         var result = await GameServerConnection.Instance.Play(amount);
 
                         RemoveOldBoardIfExists();
 
                         await PrintBoard(result.Board.ToList());
 
-                        TotalWin.text = $"Your Win : {result.TotalWin}";
+                        TotalWin.text = $"Your Win : {result.TotalWin} $";
 
                         index--;
 
