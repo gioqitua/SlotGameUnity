@@ -2,6 +2,7 @@ using ServerConnectionApi;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
@@ -13,7 +14,9 @@ public class UIManager : MonoBehaviour
     public TMP_InputField AmountInput;
     public Card CardPrefab;
     private List<Card> _currentBoard = new();
-
+    public TMP_Text TotalWin;
+    [Range(30, 1000)] public int ResultDelayInMs = 100;
+    private SemaphoreSlim _sem = new(1);
     void Awake()
     {
         if (Instance == null)
@@ -23,6 +26,8 @@ public class UIManager : MonoBehaviour
     }
     public async void PlayBtnClick()
     {
+        await _sem.WaitAsync();
+
         try
         {
             if (float.TryParse(AmountInput.text, out var amount))
@@ -33,7 +38,7 @@ public class UIManager : MonoBehaviour
 
                 await PrintBoard(result.Board.ToList());
 
-                Debug.Log(result.TotalWin);
+                TotalWin.text = $"Your Win : {result.TotalWin}";
             }
             else
             {
@@ -43,6 +48,10 @@ public class UIManager : MonoBehaviour
         catch (Exception ex)
         {
             Debug.LogException(ex);
+        }
+        finally
+        {
+            _sem.Release();
         }
     }
 
@@ -60,7 +69,14 @@ public class UIManager : MonoBehaviour
             _currentBoard.Clear();
         }
     }
-
+    private readonly static Dictionary<Rank, int> _scores = new()
+        {
+            {Rank.Ace,5 },
+            {Rank.King,4 },
+            {Rank.Queen,3 },
+            {Rank.Jack,2 },
+            {Rank.Zombie,1 },
+        };
     private async Task PrintBoard(List<CardDto> cards)
     {
         foreach (var card in cards)
@@ -71,16 +87,22 @@ public class UIManager : MonoBehaviour
 
             c.SetParent(gameObject);
 
-            c.SetText(card.Rank.ToString());
+            var text = card.Rank.ToString();
 
             if (card.IsInWinningSetup)
             {
+                var winText = string.Concat(text, " ", _scores[card.Rank]);
+                c.SetText(winText);
                 c.SetWinMaterial();
+            }
+            else
+            {
+                c.SetText(text);
             }
 
             _currentBoard.Add(c);
 
-            await Task.Delay(50);
+            await Task.Delay(ResultDelayInMs);
         }
     }
 }
