@@ -17,6 +17,7 @@ public class UIManager : MonoBehaviour
     public TMP_Text TotalWin;
     [Range(30, 1000)] public int ResultDelayInMs = 100;
     private SemaphoreSlim _sem = new(1);
+    private CancellationTokenSource _tkc = new();
     void Awake()
     {
         if (Instance == null)
@@ -24,12 +25,18 @@ public class UIManager : MonoBehaviour
         else if (Instance != this)
             Destroy(gameObject);
     }
+    private void OnDestroy()
+    {
+        _tkc.Cancel();
+    }
     public async void PlayBtnClick()
     {
-        await _sem.WaitAsync();
-
         try
         {
+            await _sem.WaitAsync();
+            
+            if (_tkc.IsCancellationRequested) return;
+
             if (float.TryParse(AmountInput.text, out var amount))
             {
                 var result = await GameServerConnection.Instance.Play(amount);
